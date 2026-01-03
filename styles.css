@@ -308,7 +308,8 @@ select:focus {
 .control-row input[type="range"] {
     flex: 1;
     height: 4px;
-    background: var(--bg-primary);
+    background: rgba(255, 255, 255, 0.2);
+    /* Visible track */
     border-radius: 2px;
     appearance: none;
 }
