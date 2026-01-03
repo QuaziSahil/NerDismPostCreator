@@ -371,252 +371,103 @@ select:focus {
         display: none;
     }
 
-    /* Modify Control Stage to be Grid-compatible */
+    /* Grid Layout Container */
+    .editor-layout {
+        display: grid;
+        /* Columns: Content | Preview | Style | Effects */
+        grid-template-columns: 240px 1fr 200px 240px;
+        /* Rows: Auto needed for stacking style panels, but we want full height. 
+           Row 1: Content (Full), Preview (Full), Image (Auto), Effects (Full).
+           Row 2: Text (Auto)
+           Row 3: Style (Fill)
+        */
+        grid-template-rows: auto auto 1fr;
+        height: calc(100vh - 50px);
+        overflow: hidden;
+        padding-bottom: 0;
+    }
+
+    /* Remove Mobile Dock Styling from Control Stage */
     .control-stage {
         height: auto;
         border: none;
         display: contents;
-        /* Removes the wrapper to let children participate in grid */
+        /* Children become grid items */
     }
 
-    /* Force all panels to show adjacent to each other */
+    /* Panels Common Desktop Style */
     .control-stage .control-panel {
         display: flex !important;
+        /* Force show all panels */
         position: static;
-        /* Remove absolute positioning */
-        height: 100%;
+        inset: auto;
         border-right: 1px solid var(--border-color);
-    }
-
-    /* Hide individual panel headers on desktop if redundant (layout implies it) */
-    .panel-header {
-        display: none;
-    }
-
-    /* Grid Layout */
-    .editor-layout {
-        display: grid;
-        grid-template-columns: 280px 1fr 240px 240px;
-        /* 4 Columns */
-        height: calc(100vh - 50px);
+        background: var(--bg-primary);
+        flex-direction: column;
         overflow: hidden;
+        /* Prevent spill */
     }
 
-    /* Position 1: Input Panel (Column 1) */
-    #panel-input {
-        order: 1;
-        grid-column: 1;
-        background: var(--bg-secondary);
-    }
-
-    /* Position 2: Preview Stage (Column 2) */
-    .preview-stage {
-        order: 2;
-        grid-column: 2;
-        padding: 40px;
-        background: #000;
-    }
-
-    /* Position 3: Style Col (Merge Image, Text, Style into Col 3) */
-    /* Wait, we have 5 panels but 4 columns. */
-    /* Solution: Put Image, Text, Style into Column 3 (Vertical Stack) OR Tab them */
-    /* Let's try stacking them in Column 3 for now, with overflow */
-
-    #panel-image,
-    #panel-text,
-    #panel-style {
-        order: 3;
-        grid-column: 3;
-        display: flex !important;
-        border-bottom: 5px solid var(--bg-primary);
-        /* Visual sep */
-    }
-
-    /* Actually stacking absolute panels in grid is hard. */
-    /* We need a WRAPPER for Col 3 if we want to stack them. */
-    /* But we used 'display: contents' on control-stage. */
-
-    /* Better approach for Desktop: 
-       CSS Grid allows placing multiple items in the same cell. 
-       But we want them stacked vertically? No, that would be huge.
-       
-       Let's use a SIMPLIFIED Desktop Grid: 3 Columns.
-       1. Controls (Left)
-       2. Preview (Center)
-       3. Export/Effects (Right)
-    */
-
-    /* Revision: Just allow horizontal scrolling of panels? No. */
-
-    /* Let's map specifically: */
-    /* Col 1: Input Panel */
-    #panel-input {
-        grid-area: 1 / 1 / 2 / 2;
-    }
-
-    /* Col 2: Preview */
-    .preview-stage {
-        grid-area: 1 / 2 / 2 / 3;
-    }
-
-    /* Col 3: Middle Controls (Image, Text, Style) - WE need a container */
-    /* Since we don't have a container in HTML, we have to hack it or change HTML */
-
-    /* Okay, let's keep it simple. Show Input in Left, Effects in Right. 
-       Image/Text/Style? Show them in a new 'Center-Right' column.
-    */
-
-    .editor-layout {
-        grid-template-columns: 260px 1fr 260px;
-        /* 3 Cols */
-    }
-
-    #panel-input {
-        grid-column: 1;
-        border-right: 1px solid var(--border-color);
-    }
-
-    .preview-stage {
-        grid-column: 2;
-    }
-
-    /* The other panels... if we set them all to grid-column: 3, they will overlap. */
-    /* Unless we position them relative. */
-
-    /* QUICK FIX: On desktop, we can *keep* the tab navigation? */
-    /* Or just show ALL panels in a scrollable sidebar on the right. */
-
-    #panel-image,
-    #panel-text,
-    #panel-style,
-    #panel-effects {
-        grid-column: 3;
-        height: auto;
-        position: relative;
-        border-bottom: 1px solid var(--border-color);
-        flex-shrink: 0;
-    }
-
-    /* We need a scrollable container for Column 3. 
-       But 'control-stage' was display: contents. 
-       Let's remove display: contents and make control-stage the Right Sidebar.
-    */
-
-    .control-stage {
-        display: flex;
-        /* Restore flex */
-        flex-direction: column;
-        grid-column: 3;
-        overflow-y: auto;
-        height: 100%;
-        border-left: 1px solid var(--border-color);
-    }
-
-    /* Make Input panel hidden in the main control stage? No, it's inside control-stage in HTML */
-    /* HTML Structure: control-stage > panel-input, panel-image... */
-    /* So if control-stage is col 3, ALL panels are in col 3. */
-
-    /* We want Input in Col 1. */
-    /* Using display: contents is the only way to split them up. */
-
-    /* Let's Try: display: contents for control-stage. */
-    /* Manually place specific panels. */
-
-    /* Input -> Col 1 */
-    #panel-input {
-        grid-column: 1;
-        grid-row: 1;
-    }
-
-    /* Others -> Col 3 */
-    #panel-image,
-    #panel-text,
-    #panel-style,
-    #panel-effects {
-        grid-column: 3;
-        grid-row: auto;
-        /* Stack them? Grid doesn't auto-stack in one cell nicely without subgrid */
-    }
-
-    /* Okay, if we put multiple items in col 3, grid will stack them vertically IF we use auto-rows? */
-    /* Or we can use a flex wrapper... but we don't have one. */
-
-    /* Hack: Make Col 3 a Flex container? No, Col 3 is a track. */
-
-    /* Let's go with: Desktop uses the Tab Interface too? 
-       Actually, that's not bad. Cleaner. 
-       Left: Input. Center: Preview. Right: Tabbed Controls (Style/Effects).
-    */
-
-    /* Let's stick to the 3-column layout where Right Column is the "Panel Area".
-       And we keep the tabs visible on Desktop? 
-       Or we force "Input" to be detached.
-    */
-
-    /* Simplest Path to Stability: 
-       Keep Mobile Layout logic for Panels on Desktop (One active at a time),
-       BUT show Input Panel *always* on Left, and others on Right?
-       That requires duplication or complex JS.
-    */
-
-    /* Let's just make the Desktop View a "Big Mobile View" for now (Split Screen),
-       OR just a standard Sidebar layout.
-       
-       Proposed Desktop:
-       Left: Preview (Large).
-       Right: Control Panel (Fixed Width).
-       Bottom Right: Nav Bar?
-       
-       Let's try to restore the old 4-column if possible.
-       HTML: Input, Image, Text, Style, Effects.
-       
-       We can set `.control-stage` to `display: grid; grid-template-columns: 1fr 1fr 1fr;`?
-       And place it below preview? No.
-       
-       Let's go with:
-       .editor-layout { grid-template-columns: 350px 1fr; }
-       Col 1: Control Stage (Scrollable list of ALL panels).
-       Col 2: Preview.
-    */
-
-    .editor-layout {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        /* Preview | Controls */
-    }
-
-    .preview-stage {
-        order: 1;
-        border-right: 1px solid var(--border-color);
-    }
-
-    .control-stage {
-        order: 2;
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-    }
-
-    .control-stage .control-panel {
-        display: flex !important;
-        /* Show ALL panels */
-        position: relative;
-        min-height: auto;
-        border-bottom: 10px solid var(--bg-primary);
-        /* Spacing */
-    }
-
+    /* Panel Headers visible on Desktop */
     .panel-header {
         display: block;
         background: var(--bg-card);
+        border-bottom: 1px solid var(--border-color);
     }
 
-    /* Show headers */
+    /* Col 1: Content (Input) */
+    #panel-input {
+        grid-column: 1;
+        grid-row: 1 / -1;
+        /* Span all rows */
+        border-right: 1px solid var(--border-color);
+    }
 
-    /* Hide the bottom nav */
-    .bottom-nav {
-        display: none;
+    /* Col 2: Preview Stage */
+    .preview-stage {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        padding: 40px;
+        background: #000;
+        border-right: 1px solid var(--border-color);
+    }
+
+    #previewCanvas {
+        max-height: calc(100vh - 100px);
+    }
+
+    /* Col 3: Style Group (Image, Text, Style) - Stacked Vertically */
+    #panel-image {
+        grid-column: 3;
+        grid-row: 1;
+        border-bottom: 1px solid var(--border-color);
+        height: auto;
+        min-height: 200px;
+    }
+
+    #panel-text {
+        grid-column: 3;
+        grid-row: 2;
+        border-bottom: 1px solid var(--border-color);
+        height: auto;
+        min-height: 250px;
+    }
+
+    #panel-style {
+        grid-column: 3;
+        grid-row: 3;
+        /* Takes remaining space */
+    }
+
+    /* Col 4: Effects & Export */
+    #panel-effects {
+        grid-column: 4;
+        grid-row: 1 / -1;
+        border-right: none;
+    }
+
+    /* Adjust scroll content for desktop panels */
+    .scroll-content {
+        padding: 12px;
     }
 }
