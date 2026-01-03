@@ -27,15 +27,19 @@ body {
     font-family: 'Inter', -apple-system, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
+    height: 100dvh;
+    /* Strict height */
+    overflow: hidden;
+    /* No body scroll */
     font-size: 16px;
 }
 
 .app {
-    min-height: 100vh;
+    height: 100dvh;
+    /* Strict height */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* Header */
@@ -46,102 +50,105 @@ body {
     padding: 10px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    /* Header never shrinks */
+    z-index: 200;
 }
 
+/* Logo Styles */
 .logo {
-    display: flex;
-    align-items: baseline;
-    gap: 2px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 .logo-ner {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
+    color: #fff;
 }
 
 .logo-dism {
-    font-size: 1.2rem;
-    font-weight: 800;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Mobile Tabs */
-.mobile-tabs {
-    display: flex;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 12px 8px;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.tab-btn.active {
     color: var(--accent-pink);
-    border-bottom-color: var(--accent-pink);
 }
 
-/* Mobile Layout */
+/* Mobile Tabs (Removed) */
+.mobile-tabs {
+    display: none;
+}
+
+
 /* ========================================
-   Mobile Layout (Default)
+   Mobile Layout (Default: Split Screen)
    ======================================== */
 .editor-layout {
     display: flex;
     flex-direction: column;
-    padding-bottom: 20px;
+    /* Use dynamic viewport height to handle mobile bars */
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    /* Prevent body scroll */
+    padding-bottom: 0;
 }
 
-/* Sticky Preview Panel */
+/* 1. Top Section: Fixed Preview (45% of screen) */
 #previewPanel {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex: 0 0 45vh;
+    /* Fixed height */
+    position: relative;
+    /* Normal flow, but fixed size */
     background: #000;
     padding: 10px;
     border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
 }
 
 .preview-wrapper {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 #previewCanvas {
-    width: 100%;
-    /* Max height constrained to leave space for accordion headers below */
-    max-height: 50vh;
+    max-width: 100%;
+    /* Fit within the 45vh container minus actions */
+    max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Accordion Styles */
-.accordion-container {
-    padding: 10px;
+.preview-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    flex-shrink: 0;
+    /* Actions don't shrink */
 }
 
+/* 2. Bottom Section: Scrollable Controls (Remaining space) */
+.accordion-container {
+    flex: 1;
+    overflow-y: auto;
+    /* Scroll INSIDE this container */
+    padding: 10px;
+    background: var(--bg-primary);
+    /* Smooth scroll for better feel */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Accordion Styles */
 .accordion-item {
     border: 1px solid var(--border-color);
     background: var(--bg-card);
     margin-bottom: 8px;
     border-radius: 8px;
     overflow: hidden;
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 .accordion-header {
@@ -203,37 +210,16 @@ body {
     flex-direction: column;
 }
 
-.preview-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-#previewCanvas {
-    width: 100%;
-    max-width: 280px;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.preview-actions {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-}
-
 .btn-generate,
 .btn-download {
     flex: 1;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 10px;
+    /* Reduced padding for compact mobile view */
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
-    min-height: 48px;
+    min-height: 40px;
 }
 
 .btn-generate {

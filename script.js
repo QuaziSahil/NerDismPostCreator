@@ -22,15 +22,10 @@ accordionHeaders.forEach(header => {
         if (!isActive) {
             item.classList.add('active');
 
-            // Scroll to the active item to ensure visibility under sticky header
+            // Scroll to the active item to ensure visibility
             // slight delay to allow open animation to start
             setTimeout(() => {
-                const headerRect = header.getBoundingClientRect();
-                const stickyHeight = document.getElementById('previewPanel').offsetHeight;
-                // Scroll page if header is hidden behind sticky preview or too low
-                // We want the header to be just below the sticky preview
-                const offset = headerRect.top + window.scrollY - stickyHeight - 10;
-                window.scrollTo({ top: offset, behavior: 'smooth' });
+                header.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 300);
         }
     });
