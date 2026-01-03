@@ -1,0 +1,554 @@
+/* ========================================
+   NerDism Post Creator - Simplified JavaScript
+   ======================================== */
+
+// ========================================
+// DOM Elements
+// ========================================
+const uploadArea = document.getElementById('uploadArea');
+const imageInput = document.getElementById('imageInput');
+const categorySelect = document.getElementById('categorySelect');
+const headlineInput = document.getElementById('headlineInput');
+const summaryInput = document.getElementById('summaryInput');
+const bulletInput = document.getElementById('bulletInput');
+const generateBtn = document.getElementById('generateBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const previewCanvas = document.getElementById('previewCanvas');
+
+// Control Elements
+const imageHeightSlider = document.getElementById('imageHeight');
+const overlayOpacitySlider = document.getElementById('overlayOpacity');
+const textFontSelect = document.getElementById('textFont');
+const headlineSizeSlider = document.getElementById('headlineSize');
+const bulletSizeSlider = document.getElementById('bulletSize');
+const textColorPicker = document.getElementById('textColor');
+const overlayColorPicker = document.getElementById('overlayColor');
+const showFooterCheckbox = document.getElementById('showFooter');
+
+// ========================================
+// State
+// ========================================
+let uploadedImage = null;
+let settings = {
+    imageHeight: 60,
+    overlayOpacity: 50,
+    overlayColor: '#0a0a0f',
+    textFont: 'Inter',
+    headlineSize: 52,
+    bulletSize: 26,
+    textColor: '#ffffff',
+    showFooter: true
+};
+
+// ========================================
+// Control Listeners
+// ========================================
+function setupSlider(slider, valueSpan, key, suffix = '') {
+    if (!slider) return;
+    slider.addEventListener('input', () => {
+        settings[key] = parseInt(slider.value);
+        if (valueSpan) valueSpan.textContent = slider.value + suffix;
+        generatePost();
+    });
+}
+
+imageHeightSlider?.addEventListener('input', () => {
+    settings.imageHeight = parseInt(imageHeightSlider.value);
+    document.getElementById('imageHeightVal').textContent = imageHeightSlider.value + '%';
+    generatePost();
+});
+
+overlayOpacitySlider?.addEventListener('input', () => {
+    settings.overlayOpacity = parseInt(overlayOpacitySlider.value);
+    document.getElementById('overlayOpacityVal').textContent = overlayOpacitySlider.value + '%';
+    generatePost();
+});
+
+headlineSizeSlider?.addEventListener('input', () => {
+    settings.headlineSize = parseInt(headlineSizeSlider.value);
+    document.getElementById('headlineSizeVal').textContent = headlineSizeSlider.value + 'px';
+    generatePost();
+});
+
+bulletSizeSlider?.addEventListener('input', () => {
+    settings.bulletSize = parseInt(bulletSizeSlider.value);
+    document.getElementById('bulletSizeVal').textContent = bulletSizeSlider.value + 'px';
+    generatePost();
+});
+
+textFontSelect?.addEventListener('change', () => {
+    settings.textFont = textFontSelect.value;
+    generatePost();
+});
+
+textColorPicker?.addEventListener('input', () => {
+    settings.textColor = textColorPicker.value;
+    generatePost();
+});
+
+overlayColorPicker?.addEventListener('input', () => {
+    settings.overlayColor = overlayColorPicker.value;
+    generatePost();
+});
+
+showFooterCheckbox?.addEventListener('change', () => {
+    settings.showFooter = showFooterCheckbox.checked;
+    generatePost();
+});
+
+// Text input listeners
+headlineInput?.addEventListener('input', generatePost);
+summaryInput?.addEventListener('input', generatePost);
+bulletInput?.addEventListener('input', generatePost);
+categorySelect?.addEventListener('change', generatePost);
+
+// ========================================
+// Image Upload
+// ========================================
+uploadArea?.addEventListener('click', () => imageInput?.click());
+
+imageInput?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) loadImageFromFile(file);
+});
+
+// Drag and drop
+uploadArea?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea?.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        loadImageFromFile(file);
+    }
+});
+
+function loadImageFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            uploadedImage = img;
+            uploadArea.classList.add('has-image');
+            uploadArea.innerHTML = '<span class="upload-icon">✅</span><span>Image loaded</span>';
+            generatePost();
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// ========================================
+// Generate Button
+// ========================================
+generateBtn?.addEventListener('click', generatePost);
+
+// ========================================
+// Toast Notifications
+// ========================================
+function showToast(message, type = 'info') {
+    let toast = document.querySelector('.toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ========================================
+// Canvas Rendering
+// ========================================
+function generatePost() {
+    const ctx = previewCanvas.getContext('2d');
+    const w = 1080;
+    const h = 1350;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, w, h);
+
+    // Calculate image height
+    const imageH = h * (settings.imageHeight / 100);
+
+    // Draw layers
+    drawBackground(ctx, w, h);
+    drawImage(ctx, w, imageH);
+    drawOverlay(ctx, w, h, imageH);
+    drawAccentLine(ctx, w, imageH);
+    drawLogo(ctx, w);
+    drawCategory(ctx, w);
+    drawHeadline(ctx, w, h, imageH);
+    drawSummary(ctx, w, h, imageH);
+    if (settings.showFooter) drawFooter(ctx, w, h);
+}
+
+function drawBackground(ctx, w, h) {
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#0a0a0f');
+    grad.addColorStop(1, '#12121a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function drawImage(ctx, w, imageH) {
+    if (!uploadedImage) {
+        // Placeholder
+        ctx.fillStyle = '#1a1a25';
+        ctx.fillRect(0, 0, w, imageH);
+        ctx.fillStyle = '#333';
+        ctx.font = '40px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('📷 Upload Image', w / 2, imageH / 2);
+        ctx.textAlign = 'left';
+        return;
+    }
+
+    const img = uploadedImage;
+    const scale = Math.max(w / img.width, imageH / img.height);
+    const newW = img.width * scale;
+    const newH = img.height * scale;
+    const x = (w - newW) / 2;
+    const y = (imageH - newH) / 2;
+    ctx.drawImage(img, x, y, newW, newH);
+}
+
+function drawOverlay(ctx, w, h, imageH) {
+    const opacity = settings.overlayOpacity / 100;
+    const color = settings.overlayColor;
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+
+    // Top gradient on image
+    const topGrad = ctx.createLinearGradient(0, 0, 0, imageH);
+    topGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.8})`);
+    topGrad.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${opacity * 0.3})`);
+    topGrad.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${opacity * 0.5})`);
+    topGrad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity})`);
+    ctx.fillStyle = topGrad;
+    ctx.fillRect(0, 0, w, imageH);
+
+    // Bottom section
+    const bottomGrad = ctx.createLinearGradient(0, imageH, 0, h);
+    bottomGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.95)`);
+    bottomGrad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.98)`);
+    ctx.fillStyle = bottomGrad;
+    ctx.fillRect(0, imageH, w, h - imageH);
+}
+
+function drawAccentLine(ctx, w, imageH) {
+    const grad = ctx.createLinearGradient(40, 0, w - 40, 0);
+    grad.addColorStop(0, '#d946a8');
+    grad.addColorStop(0.5, '#a855f7');
+    grad.addColorStop(1, '#6366f1');
+    ctx.fillStyle = grad;
+    ctx.shadowColor = '#d946a8';
+    ctx.shadowBlur = 15;
+    ctx.fillRect(40, imageH - 2, w - 80, 4);
+    ctx.shadowBlur = 0;
+}
+
+function drawLogo(ctx, w) {
+    ctx.save();
+    const logoX = 40;
+    const logoY = 40;
+
+    ctx.font = `bold 44px ${settings.textFont}, sans-serif`;
+    const nerW = ctx.measureText('Ner').width;
+    const dismW = ctx.measureText('Dism').width;
+    const totalW = nerW + dismW + 36;
+
+    // Background
+    ctx.shadowColor = 'rgba(217, 70, 168, 0.5)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(10, 10, 15, 0.9)';
+    ctx.beginPath();
+    ctx.roundRect(logoX, logoY, totalW, 64, 32);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.strokeStyle = 'rgba(217, 70, 168, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Text
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Ner', logoX + 18, logoY + 45);
+
+    const grad = ctx.createLinearGradient(logoX + 18 + nerW, 0, logoX + 18 + nerW + dismW, 0);
+    grad.addColorStop(0, '#d946a8');
+    grad.addColorStop(1, '#a855f7');
+    ctx.fillStyle = grad;
+    ctx.fillText('Dism', logoX + 18 + nerW, logoY + 45);
+
+    ctx.restore();
+}
+
+function drawCategory(ctx, w) {
+    const category = categorySelect?.value || 'NEWS';
+    const categoryIcons = {
+        'GAMING': '🎮', 'ANIME': '🎬', 'TECH': '💻', 'MOVIES': '🎥', 'NEWS': '📰'
+    };
+
+    ctx.save();
+    const text = `${categoryIcons[category] || '📰'} ${category}`;
+    ctx.font = `bold 24px ${settings.textFont}, sans-serif`;
+    const textW = ctx.measureText(text).width;
+    const x = w - textW - 60;
+    const y = 55;
+
+    ctx.fillStyle = 'rgba(217, 70, 168, 0.2)';
+    ctx.beginPath();
+    ctx.roundRect(x - 15, y - 25, textW + 30, 40, 20);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(217, 70, 168, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#d946a8';
+    ctx.fillText(text, x, y);
+    ctx.restore();
+}
+
+function drawHeadline(ctx, w, h, imageH) {
+    const headline = headlineInput?.value || '';
+    if (!headline) return;
+
+    const fontSize = settings.headlineSize;
+    const maxWidth = w - 80;
+
+    ctx.save();
+    ctx.font = `bold ${fontSize}px "${settings.textFont}", sans-serif`;
+    ctx.fillStyle = settings.textColor;
+    ctx.textBaseline = 'bottom';
+
+    // Word wrap
+    const words = headline.split(' ');
+    let lines = [];
+    let currentLine = '';
+
+    words.forEach(word => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    });
+    lines.push(currentLine);
+
+    if (lines.length > 3) lines = lines.slice(0, 3);
+
+    const lineHeight = fontSize * 1.15;
+    const startY = imageH - 30;
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetY = 3;
+
+    lines.forEach((line, i) => {
+        const y = startY - (lines.length - 1 - i) * lineHeight;
+        ctx.fillText(line, 40, y);
+    });
+
+    ctx.restore();
+}
+
+function drawSummary(ctx, w, h, imageH) {
+    const shortSummary = summaryInput?.value || '';
+    const bulletsText = bulletInput?.value || '';
+
+    ctx.save();
+    let currentY = imageH + 35;
+
+    // Quote Box with label
+    if (shortSummary.trim()) {
+        // Label
+        ctx.font = `bold 20px ${settings.textFont}, sans-serif`;
+        ctx.fillStyle = '#d946a8';
+        ctx.fillText('💬 SUMMARY', 55, currentY);
+        currentY += 15;
+
+        currentY = drawQuoteBox(ctx, w, currentY, shortSummary);
+        currentY += 30;
+    }
+
+    // Bullet Points with label
+    if (bulletsText.trim()) {
+        // Label
+        ctx.font = `bold 20px ${settings.textFont}, sans-serif`;
+        ctx.fillStyle = '#c084fc';
+        ctx.fillText('📌 KEY POINTS', 55, currentY);
+        currentY += 20;
+
+        drawColorfulBullets(ctx, w, h, currentY, bulletsText);
+    }
+
+    ctx.restore();
+}
+
+function drawQuoteBox(ctx, w, startY, text) {
+    const maxWidth = w - 140;
+    const quoteFontSize = Math.min(settings.bulletSize + 4, 32);
+
+    ctx.font = `600 italic ${quoteFontSize}px "${settings.textFont}", sans-serif`;
+    const words = text.split(' ');
+    let lines = [];
+    let currentLine = '';
+
+    words.forEach(word => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+    });
+    lines.push(currentLine);
+
+    if (lines.length > 2) {
+        lines = lines.slice(0, 2);
+        lines[1] = lines[1].substring(0, Math.max(0, lines[1].length - 3)) + '...';
+    }
+
+    const lineHeight = quoteFontSize * 1.3;
+    const boxHeight = lines.length * lineHeight + 36;
+
+    // Box
+    ctx.fillStyle = 'rgba(217, 70, 168, 0.12)';
+    ctx.beginPath();
+    ctx.roundRect(50, startY, w - 100, boxHeight, 14);
+    ctx.fill();
+
+    // Accent
+    const grad = ctx.createLinearGradient(0, startY, 0, startY + boxHeight);
+    grad.addColorStop(0, '#ff6b9d');
+    grad.addColorStop(1, '#a855f7');
+    ctx.fillStyle = grad;
+    ctx.fillRect(50, startY, 5, boxHeight);
+
+    // Quote mark
+    ctx.font = 'bold 50px serif';
+    ctx.fillStyle = 'rgba(217, 70, 168, 0.25)';
+    ctx.fillText('"', 62, startY + 42);
+
+    // Text
+    ctx.font = `600 italic ${quoteFontSize}px "${settings.textFont}", sans-serif`;
+    ctx.fillStyle = settings.textColor;
+    ctx.textBaseline = 'top';
+
+    lines.forEach((line, i) => {
+        ctx.fillText(line, 85, startY + 18 + i * lineHeight);
+    });
+
+    return startY + boxHeight;
+}
+
+function drawColorfulBullets(ctx, w, h, startY, bulletsText) {
+    const bullets = bulletsText.split('\n')
+        .map(b => b.trim().replace(/^[•\-\*]\s*/, ''))
+        .filter(b => b.length > 0);
+
+    if (bullets.length === 0) return;
+
+    const maxWidth = w - 150;
+    const bulletFontSize = settings.bulletSize;
+    const lineHeight = bulletFontSize * 1.6;
+    let currentY = startY + 5;
+
+    const bulletColors = [
+        { dot: '#ff6b9d', glow: '#ff6b9d' },
+        { dot: '#c084fc', glow: '#a855f7' },
+        { dot: '#60a5fa', glow: '#3b82f6' },
+        { dot: '#34d399', glow: '#10b981' },
+        { dot: '#fbbf24', glow: '#f59e0b' },
+        { dot: '#fb7185', glow: '#f43f5e' }
+    ];
+
+    bullets.forEach((bullet, idx) => {
+        if (currentY > h - 70) return;
+
+        const colors = bulletColors[idx % bulletColors.length];
+
+        // Dot
+        ctx.save();
+        ctx.shadowColor = colors.glow;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = colors.dot;
+        ctx.beginPath();
+        ctx.arc(70, currentY + bulletFontSize / 2, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Text
+        ctx.font = `500 ${bulletFontSize}px "${settings.textFont}", sans-serif`;
+        ctx.fillStyle = settings.textColor + 'ee';
+        ctx.textBaseline = 'top';
+
+        const words = bullet.split(' ');
+        let lines = [];
+        let currentLine = '';
+
+        words.forEach(word => {
+            const testLine = currentLine ? `${currentLine} ${word}` : word;
+            if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+                lines.push(currentLine);
+                currentLine = word;
+            } else {
+                currentLine = testLine;
+            }
+        });
+        lines.push(currentLine);
+
+        lines.forEach((line, lineIdx) => {
+            if (currentY > h - 70) return;
+            ctx.fillText(line, 95, currentY);
+            if (lineIdx < lines.length - 1) {
+                currentY += bulletFontSize * 1.15;
+            }
+        });
+
+        currentY += lineHeight;
+    });
+}
+
+function drawFooter(ctx, w, h) {
+    ctx.save();
+    ctx.font = `bold 28px ${settings.textFont}, sans-serif`;
+    const grad = ctx.createLinearGradient(w / 2 - 100, 0, w / 2 + 100, 0);
+    grad.addColorStop(0, '#d946a8');
+    grad.addColorStop(1, '#a855f7');
+    ctx.fillStyle = grad;
+    ctx.textAlign = 'center';
+    ctx.fillText('ner-dism.vercel.app', w / 2, h - 35);
+    ctx.restore();
+}
+
+// ========================================
+// Download
+// ========================================
+downloadBtn?.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = `nerdism-post-${Date.now()}.png`;
+    link.href = previewCanvas.toDataURL('image/png');
+    link.click();
+    showToast('Downloaded!', 'success');
+});
+
+// ========================================
+// Initialize
+// ========================================
+generatePost();
