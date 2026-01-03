@@ -3,28 +3,36 @@
    ======================================== */
 
 // ========================================
-// Mobile Tab Switching
 // ========================================
-const tabBtns = document.querySelectorAll('.tab-btn');
-const panels = document.querySelectorAll('.panel');
+// Accordion Logic (Mobile)
+// ========================================
+const accordionHeaders = document.querySelectorAll('.accordion-header');
 
-// Set first tab active on load
-document.querySelector('.panel-content')?.classList.add('active');
+accordionHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+        const item = header.parentElement;
+        const isActive = item.classList.contains('active');
 
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // Update tab buttons
-        tabBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Update panels
-        const targetPanel = btn.dataset.tab;
-        panels.forEach(p => {
-            p.classList.remove('active');
-            if (p.dataset.panel === targetPanel) {
-                p.classList.add('active');
-            }
+        // Close all items (Accordion behavior)
+        document.querySelectorAll('.accordion-item').forEach(i => {
+            i.classList.remove('active');
         });
+
+        // Toggle current
+        if (!isActive) {
+            item.classList.add('active');
+
+            // Scroll to the active item to ensure visibility under sticky header
+            // slight delay to allow open animation to start
+            setTimeout(() => {
+                const headerRect = header.getBoundingClientRect();
+                const stickyHeight = document.getElementById('previewPanel').offsetHeight;
+                // Scroll page if header is hidden behind sticky preview or too low
+                // We want the header to be just below the sticky preview
+                const offset = headerRect.top + window.scrollY - stickyHeight - 10;
+                window.scrollTo({ top: offset, behavior: 'smooth' });
+            }, 300);
+        }
     });
 });
 

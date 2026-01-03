@@ -97,75 +97,110 @@ body {
 }
 
 /* Mobile Layout */
+/* ========================================
+   Mobile Layout (Default)
+   ======================================== */
 .editor-layout {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    padding-bottom: 20px;
 }
 
-.panel {
-    display: none;
-    flex: 1;
-    background: var(--bg-primary);
-    padding: 16px;
-    overflow-y: auto;
-}
-
-.panel.active {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Content Panel */
-.input-group {
-    margin-bottom: 12px;
-}
-
-.input-group label {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
-.input-group textarea,
-.input-group select {
-    width: 100%;
-    padding: 12px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 16px;
-    font-family: inherit;
-    resize: none;
-}
-
-.input-group textarea::placeholder {
-    color: var(--text-muted);
-}
-
-.upload-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    min-height: 50px;
-    border: 2px dashed var(--border-color);
-    border-radius: 10px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.upload-area.has-image {
-    border-color: var(--accent-purple);
-    color: var(--accent-purple);
-    border-style: solid;
-}
-
-/* Preview Panel */
-.panel-preview {
+/* Sticky Preview Panel */
+#previewPanel {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background: #000;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.preview-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#previewCanvas {
+    width: 100%;
+    /* Max height constrained to leave space for accordion headers below */
+    max-height: 50vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Accordion Styles */
+.accordion-container {
+    padding: 10px;
+}
+
+.accordion-item {
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    margin-bottom: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: none;
+    text-align: left;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-header::after {
+    content: '▼';
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+}
+
+.accordion-item.active .accordion-header::after {
+    transform: rotate(180deg);
+}
+
+.accordion-item.active .accordion-header {
+    background: var(--bg-secondary);
+    color: var(--accent-pink);
+}
+
+.accordion-content {
+    display: none;
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.accordion-item.active .accordion-content {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Panel Inner Content */
+.panel-inner {
+    display: flex;
+    flex-direction: column;
 }
 
 .preview-wrapper {
@@ -364,43 +399,116 @@ body {
 /* ========================================
    Desktop Layout (4-column) - Only for wide screens
    ======================================== */
+/* ========================================
+   Desktop Layout (4-column) - Only for wide screens
+   ======================================== */
 @media (min-width: 1024px) {
-    .mobile-tabs {
-        display: none;
+
+    /* Reset Accordion Styles for Desktop */
+    .accordion-container {
+        display: contents;
+        /* Allows children to be grid items */
     }
 
+    .accordion-item {
+        border: none;
+        background: transparent;
+        margin: 0;
+        border-radius: 0;
+        display: contents;
+        /* Allows children to be grid items */
+    }
+
+    .accordion-header {
+        display: none;
+        /* Hide headers on desktop */
+    }
+
+    .accordion-content {
+        display: flex !important;
+        /* Always show content */
+        padding: 0;
+        border: none;
+        animation: none;
+    }
+
+    /* Grid Layout */
     .editor-layout {
         display: grid;
         grid-template-columns: 240px 1fr 200px 200px;
         /* 4 columns: Content | Preview | Style | Effects */
         overflow: hidden;
+        height: calc(100vh - 50px);
+        padding-bottom: 0;
     }
 
-    .panel {
-        display: flex !important;
-        flex-direction: column;
-        border-right: 1px solid var(--border-color);
-        max-height: calc(100vh - 50px);
-        overflow-y: auto;
-    }
+    /* Re-map panels to grid areas if needed, or rely on source order */
+    /* 
+       Source Order in HTML:
+       1. Preview (#previewPanel)
+       2. Container -> Content (#contentPanel)
+       3. Container -> Style (#stylePanel)
+       4. Container -> Effects (#effectsPanel)
+       
+       We need specific visual order in Grid: 
+       Col 1: Content
+       Col 2: Preview
+       Col 3: Style
+       Col 4: Effects
+    */
 
-    .panel:last-child {
-        border-right: none;
-        border-left: 1px solid var(--border-color);
-    }
-
-    .panel-preview {
-        padding: 20px;
+    #previewPanel {
+        order: 2;
+        /* Visual Postion 2 */
+        position: static;
+        /* Remove sticky */
         background: #000;
+        padding: 20px;
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    /* Content Panel (Inside Accordion) */
+    .accordion-item:nth-child(1) .accordion-content {
+        order: 1;
+        border-right: 1px solid var(--border-color);
+    }
+
+    /* Style Panel */
+    .accordion-item:nth-child(2) .accordion-content {
+        order: 3;
+        border-right: 1px solid var(--border-color);
+    }
+
+    /* Effects Panel */
+    .accordion-item:nth-child(3) .accordion-content {
+        order: 4;
+        border-right: none;
+    }
+
+    /* Generic Panel Inner Styling */
+    .panel-inner {
+        padding: 16px;
+        overflow-y: auto;
+        height: 100%;
+        background: var(--bg-primary);
     }
 
     .preview-wrapper {
-        flex: 1;
+        height: 100%;
     }
 
     #previewCanvas {
         max-width: 100%;
         max-height: calc(100vh - 180px);
         object-fit: contain;
+    }
+
+    /* Hide Preview Actions inside preview panel on desktop if preferred, or styling appropriately */
+    .preview-actions {
+        margin-top: 10px;
     }
 }
