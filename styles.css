@@ -315,9 +315,9 @@ body {
 }
 
 /* ========================================
-   Desktop Layout (3-column)
+   Desktop Layout (3-column) - Only for wide screens
    ======================================== */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
     .mobile-tabs {
         display: none;
     }
