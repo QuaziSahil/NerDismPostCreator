@@ -595,3 +595,17 @@ downloadBtn?.addEventListener('click', () => {
 // ========================================
 generateBtn?.addEventListener('click', generatePost);
 generatePost();
+
+// Desktop buttons (for desktop layout)
+const generateBtnDesktop = document.getElementById('generateBtnDesktop');
+const downloadBtnDesktop = document.getElementById('downloadBtnDesktop');
+
+generateBtnDesktop?.addEventListener('click', generatePost);
+downloadBtnDesktop?.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = `nerdism-post-${Date.now()}.png`;
+    link.href = previewCanvas.toDataURL('image/png');
+    link.click();
+    downloadBtnDesktop.textContent = '✅ Saved!';
+    setTimeout(() => downloadBtnDesktop.textContent = '⬇️ Download', 2000);
+});
