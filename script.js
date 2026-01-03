@@ -1,6 +1,32 @@
 /* ========================================
-   NerDism Post Creator - Simplified JavaScript
+   NerDism Post Creator - JavaScript
    ======================================== */
+
+// ========================================
+// Mobile Tab Switching
+// ========================================
+const tabBtns = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.panel');
+
+// Set first tab active on load
+document.querySelector('.panel-content')?.classList.add('active');
+
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Update tab buttons
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update panels
+        const targetPanel = btn.dataset.tab;
+        panels.forEach(p => {
+            p.classList.remove('active');
+            if (p.dataset.panel === targetPanel) {
+                p.classList.add('active');
+            }
+        });
+    });
+});
 
 // ========================================
 // DOM Elements

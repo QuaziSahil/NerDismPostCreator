@@ -20,26 +20,28 @@
         <header class="header">
             <div class="logo">
                 <span class="logo-ner">Ner</span><span class="logo-dism">Dism</span>
-                <span class="logo-sub">Post Creator</span>
             </div>
         </header>
 
-        <main class="editor-layout">
-            <!-- Content Inputs Panel -->
-            <section class="panel panel-content">
-                <h3>📥 Content</h3>
+        <!-- Mobile Tab Navigation -->
+        <nav class="mobile-tabs">
+            <button class="tab-btn active" data-tab="content">📥 Content</button>
+            <button class="tab-btn" data-tab="preview">📱 Preview</button>
+            <button class="tab-btn" data-tab="style">🎨 Style</button>
+        </nav>
 
+        <main class="editor-layout">
+            <!-- Content Panel -->
+            <section class="panel panel-content" data-panel="content">
                 <div class="input-group">
                     <label>📷 Image</label>
                     <div class="upload-area" id="uploadArea">
-                        <span class="upload-icon">📷</span>
-                        <span>Tap to upload image</span>
+                        <span>📷 Tap to upload</span>
                         <input type="file" id="imageInput" accept="image/*" hidden />
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label>🏷️ Category</label>
+                <div class="input-group inline-row">
                     <select id="categorySelect">
                         <option value="GAMING">🎮 Gaming</option>
                         <option value="ANIME">🎬 Anime</option>
@@ -50,28 +52,20 @@
                 </div>
 
                 <div class="input-group">
-                    <label>📝 Headline</label>
-                    <textarea id="headlineInput" rows="2" placeholder="Enter headline..."></textarea>
+                    <textarea id="headlineInput" rows="2" placeholder="📝 Headline..."></textarea>
                 </div>
 
                 <div class="input-group">
-                    <label>💬 Short Summary</label>
-                    <textarea id="summaryInput" rows="2" placeholder="One-line summary..."></textarea>
+                    <textarea id="summaryInput" rows="2" placeholder="💬 Short summary..."></textarea>
                 </div>
 
                 <div class="input-group">
-                    <label>📌 Key Points (one per line)</label>
-                    <textarea id="bulletInput" rows="4"
-                        placeholder="First key point&#10;Second key point&#10;Third key point"></textarea>
+                    <textarea id="bulletInput" rows="3" placeholder="📌 Key points (one per line)"></textarea>
                 </div>
             </section>
 
             <!-- Preview Panel -->
-            <section class="panel panel-preview">
-                <div class="preview-header">
-                    <h3>📱 Preview</h3>
-                    <span class="preview-size">1080 × 1350</span>
-                </div>
+            <section class="panel panel-preview" data-panel="preview">
                 <div class="preview-wrapper">
                     <canvas id="previewCanvas" width="1080" height="1350"></canvas>
                 </div>
@@ -81,15 +75,11 @@
                 </div>
             </section>
 
-            <!-- Style Controls Panel -->
-            <section class="panel panel-controls">
-                <h3>🎨 Style</h3>
-
-                <!-- Image Controls -->
-                <div class="control-group">
-                    <div class="control-header">Image</div>
+            <!-- Style Panel -->
+            <section class="panel panel-controls" data-panel="style">
+                <div class="compact-controls">
                     <div class="control-row">
-                        <label>Height</label>
+                        <label>Image Height</label>
                         <input type="range" id="imageHeight" min="40" max="80" value="60" />
                         <span id="imageHeightVal">60%</span>
                     </div>
@@ -98,11 +88,6 @@
                         <input type="range" id="overlayOpacity" min="0" max="100" value="50" />
                         <span id="overlayOpacityVal">50%</span>
                     </div>
-                </div>
-
-                <!-- Text Controls -->
-                <div class="control-group">
-                    <div class="control-header">Text</div>
                     <div class="control-row">
                         <label>Font</label>
                         <select id="textFont">
@@ -120,23 +105,14 @@
                         <input type="range" id="bulletSize" min="18" max="36" value="26" />
                         <span id="bulletSizeVal">26px</span>
                     </div>
-                </div>
-
-                <!-- Colors -->
-                <div class="control-group">
-                    <div class="control-header">Colors</div>
                     <div class="control-row">
-                        <label>Text</label>
+                        <label>Text Color</label>
                         <input type="color" id="textColor" value="#ffffff" />
                     </div>
                     <div class="control-row">
-                        <label>Overlay</label>
+                        <label>Overlay Color</label>
                         <input type="color" id="overlayColor" value="#0a0a0f" />
                     </div>
-                </div>
-
-                <!-- Footer Toggle -->
-                <div class="control-group">
                     <div class="control-row">
                         <label>Show Footer</label>
                         <input type="checkbox" id="showFooter" checked />
