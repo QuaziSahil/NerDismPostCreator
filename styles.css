@@ -207,21 +207,25 @@ body {
 }
 
 .preview-wrapper {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #000;
+    background: #0a0a0f;
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 12px;
+    padding: 20px;
 }
 
 #previewCanvas {
-    width: 100%;
-    max-width: 400px;
+    /* Constrain to proper aspect ratio */
+    width: auto;
     height: auto;
+    max-width: 100%;
+    max-height: 450px;
     border-radius: 8px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .preview-actions {
@@ -407,7 +411,7 @@ body {
 @media (min-width: 900px) {
     .editor-layout {
         display: grid;
-        grid-template-columns: 280px 1fr 260px;
+        grid-template-columns: 300px 1fr 280px;
         gap: 0;
         overflow: hidden;
     }
@@ -426,11 +430,23 @@ body {
 
     .panel-preview {
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .preview-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     #previewCanvas {
-        max-width: 100%;
-        max-height: calc(100vh - 180px);
+        /* Keep aspect ratio, don't stretch */
+        width: auto;
+        height: auto;
+        max-width: 360px;
+        max-height: calc(100vh - 200px);
     }
 }
 
