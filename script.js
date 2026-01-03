@@ -335,13 +335,18 @@ function drawLogo(ctx, w, theme) {
 }
 
 function drawCategory(ctx, w, theme) {
-    const category = categorySelect?.value || 'NEWS';
+    const category = categorySelect?.value || 'GENERAL';
+    if (category === 'NONE') return;
+
     const categoryIcons = {
-        'GAMING': '🎮', 'ANIME': '🎬', 'TECH': '💻', 'MOVIES': '🎥', 'NEWS': '📰'
+        'GENERAL': '🌐', 'BOOKS': '📚', 'GAMING': '🎮', 'ANIME': '🎬', 'TECH': '💻', 'MOVIES': '🎥', 'NEWS': '📰'
     };
 
     ctx.save();
-    const text = `${categoryIcons[category] || '📰'} ${category}`;
+    // Use title case for display if desired, otherwise uppercase is fine.
+    // Let's capitalize first letter for better look, or keep uppercase as is. 
+    // Keeping uppercase as it matches existing style.
+    const text = `${categoryIcons[category] || '🌐'} ${category}`;
     ctx.font = `bold 24px "${settings.textFont}", sans-serif`;
     const textW = ctx.measureText(text).width;
     const x = w - textW - 60;
