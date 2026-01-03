@@ -2,13 +2,6 @@
    NerDism Post Creator - Mobile-First CSS
    ======================================== */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
 :root {
     --bg-primary: #0a0a0f;
     --bg-secondary: #12121a;
@@ -20,6 +13,13 @@
     --text-muted: #6b7280;
     --border-color: rgba(255, 255, 255, 0.1);
     --gradient: linear-gradient(135deg, #d946a8 0%, #a855f7 50%, #6366f1 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -36,7 +36,6 @@ body {
 
 .app {
     height: 100dvh;
-    /* Strict height */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -51,12 +50,12 @@ body {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
-    /* Header never shrinks */
-    z-index: 200;
+    z-index: 20;
 }
 
-/* Logo Styles */
 .logo {
+    display: flex;
+    gap: 2px;
     font-family: 'Oswald', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
@@ -67,159 +66,287 @@ body {
 }
 
 .logo-dism {
-    color: var(--accent-pink);
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
-
-/* Mobile Tabs (Removed) */
-.mobile-tabs {
-    display: none;
-}
-
 
 /* ========================================
-   Mobile Layout (Default: Split Screen)
+   Mobile Layout (Docked)
    ======================================== */
 .editor-layout {
     display: flex;
     flex-direction: column;
-    /* Use dynamic viewport height to handle mobile bars */
-    height: 100vh;
-    height: 100dvh;
+    flex: 1;
+    /* Fills remaining height below header */
     overflow: hidden;
-    /* Prevent body scroll */
-    padding-bottom: 0;
+    position: relative;
 }
 
-/* 1. Top Section: Fixed Preview (45% of screen) */
-#previewPanel {
-    flex: 0 0 45vh;
-    /* Fixed height */
-    position: relative;
-    /* Normal flow, but fixed size */
-    background: #000;
-    padding: 10px;
-    border-bottom: 1px solid var(--border-color);
+/* 1. Preview Stage (Flexible Top) */
+.preview-stage {
+    flex: 1;
+    /* Takes all available space not used by controls */
     display: flex;
     flex-direction: column;
-    z-index: 10;
+    justify-content: center;
+    /* Center vertically */
+    align-items: center;
+    background: #000;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
 }
 
-.preview-wrapper {
-    flex: 1;
+.preview-container {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
 }
 
 #previewCanvas {
     max-width: 100%;
-    /* Fit within the 45vh container minus actions */
     max-height: 100%;
     object-fit: contain;
-    border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.preview-actions {
-    display: flex;
-    gap: 10px;
-    padding-top: 10px;
+/* 2. Control Stage (Fixed Bottom Dock) */
+.control-stage {
+    height: 35vh;
+    /* Fixed height for controls (~35% of screen) */
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    position: relative;
     flex-shrink: 0;
-    /* Actions don't shrink */
+    z-index: 10;
 }
 
-/* 2. Bottom Section: Scrollable Controls (Remaining space) */
-.accordion-container {
+.control-stage .control-panel {
+    position: absolute;
+    inset: 0;
+    display: none;
+    /* Hidden by default */
+    flex-direction: column;
+    background: var(--bg-card);
+}
+
+.control-stage .control-panel.active {
+    display: flex;
+    /* Active panel shows */
+}
+
+/* Panel Header */
+.panel-header {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-pink);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+}
+
+/* Scrollable Content inside Panel */
+.scroll-content {
     flex: 1;
     overflow-y: auto;
-    /* Scroll INSIDE this container */
-    padding: 10px;
-    background: var(--bg-primary);
-    /* Smooth scroll for better feel */
+    padding: 16px;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Accordion Styles */
-.accordion-item {
-    border: 1px solid var(--border-color);
-    background: var(--bg-card);
-    margin-bottom: 8px;
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-    /* Prevent shrinking */
-}
-
-.accordion-header {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-card);
-    border: none;
-    text-align: left;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.accordion-header::after {
-    content: '▼';
-    font-size: 0.8rem;
-    transition: transform 0.3s;
-}
-
-.accordion-item.active .accordion-header::after {
-    transform: rotate(180deg);
-}
-
-.accordion-item.active .accordion-header {
+/* 3. Bottom Navigation Bar */
+.bottom-nav {
+    height: 60px;
     background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-shrink: 0;
+    overflow-x: auto;
+    /* Horizontal scroll if small screen */
+    z-index: 20;
+}
+
+/* Hide scrollbar for nav */
+.bottom-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.bottom-nav {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.nav-scroller {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    /* Distribute evenly if possible */
+    min-width: max-content;
+    /* Ensure scroll if content overflows */
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 70px;
+}
+
+.nav-icon {
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+
+.nav-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.nav-btn.active {
     color: var(--accent-pink);
 }
 
-.accordion-content {
-    display: none;
-    padding: 16px;
-    border-top: 1px solid var(--border-color);
+.nav-btn.active .nav-icon {
+    transform: scale(1.1);
 }
 
-.accordion-item.active .accordion-content {
-    display: block;
-    animation: slideDown 0.3s ease-out;
+/* ========================================
+   Components & Inputs
+   ======================================== */
+.input-group {
+    margin-bottom: 12px;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* Panel Inner Content */
-.panel-inner {
+.upload-area:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+textarea,
+input[type="text"],
+select {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: none;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+    border-color: var(--accent-purple);
+    outline: none;
+}
+
+.row-group {
     display: flex;
-    flex-direction: column;
+    gap: 10px;
+}
+
+.row-group select {
+    flex: 1;
+}
+
+/* Sliders & Controls */
+.control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.control-row label {
+    flex: 0 0 80px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.control-row input[type="range"] {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-primary);
+    border-radius: 2px;
+    appearance: none;
+}
+
+.control-row input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent-pink);
+    border-radius: 50%;
+}
+
+.section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--accent-purple);
+    margin: 15px 0 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Theme Grid */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.theme-btn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.theme-btn.active {
+    border-color: var(--accent-pink);
+    color: var(--accent-pink);
+    background: rgba(217, 70, 168, 0.1);
+}
+
+/* Action Buttons */
+.action-buttons-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .btn-generate,
 .btn-download {
     flex: 1;
-    padding: 10px;
-    /* Reduced padding for compact mobile view */
+    padding: 12px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 0.85rem;
     cursor: pointer;
-    min-height: 40px;
 }
 
 .btn-generate {
@@ -234,267 +361,262 @@ body {
     color: var(--accent-purple);
 }
 
-/* Style Panel */
-/* Style Panel */
-.compact-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    /* Reduced gap from 12px */
-}
-
-.section-label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: var(--accent-purple);
-    margin: 8px 0 4px;
-    /* Reduced margins */
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.control-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    /* Reduced gap */
-    min-height: 24px;
-    /* Reduced min-height */
-}
-
-.control-row label {
-    flex: 0 0 70px;
-    /* Reduced width */
-    font-size: 0.7rem;
-    /* Reduced font size */
-    color: var(--text-muted);
-}
-
-.control-row input[type="range"] {
-    flex: 1;
-    appearance: none;
-    height: 4px;
-    /* Slimit track */
-    background: var(--bg-card);
-    border-radius: 2px;
-}
-
-.control-row input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
-    width: 14px;
-    /* Smaller thumb */
-    height: 14px;
-    background: var(--accent-pink);
-    border-radius: 50%;
-}
-
-.control-row select {
-    flex: 1;
-    padding: 4px 8px;
-    /* Reduced padding */
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-primary);
-    font-size: 0.8rem;
-}
-
-.control-row input[type="color"] {
-    width: 32px;
-    height: 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.control-row input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent-pink);
-}
-
-.control-row span {
-    flex: 0 0 32px;
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    text-align: right;
-}
-
-.theme-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-    /* Reduced gap */
-    margin-bottom: 5px;
-}
-
-.theme-btn {
-    padding: 6px;
-    /* Reduced padding */
-    font-size: 0.75rem;
-}
-
-/* Toast */
-.toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    opacity: 0;
-    z-index: 1000;
-    transition: opacity 0.3s;
-}
-
-.toast.show {
-    opacity: 1;
-}
-
-.toast.success {
-    border-color: #22c55e;
-    color: #22c55e;
-}
-
-.toast.error {
-    border-color: #ef4444;
-    color: #ef4444;
-}
-
-.toast.info {
-    border-color: var(--accent-pink);
-    color: var(--accent-pink);
-}
-
-/* ... (previous styles) ... */
-
-/* Duplicates removed */
-
-.row-group {
-    display: flex;
-    gap: 10px;
-}
-
-.row-group select {
-    flex: 1;
-}
-
 /* ========================================
-   Desktop Layout (4-column) - Only for wide screens
-   ======================================== */
-/* ========================================
-   Desktop Layout (4-column) - Only for wide screens
+   Desktop Layout (min-width: 1024px)
    ======================================== */
 @media (min-width: 1024px) {
 
-    /* Reset Accordion Styles for Desktop */
-    .accordion-container {
-        display: contents;
-        /* Allows children to be grid items */
-    }
-
-    .accordion-item {
-        border: none;
-        background: transparent;
-        margin: 0;
-        border-radius: 0;
-        display: contents;
-        /* Allows children to be grid items */
-    }
-
-    .accordion-header {
+    /* Hide Mobile Nav */
+    .bottom-nav {
         display: none;
-        /* Hide headers on desktop */
     }
 
-    .accordion-content {
-        display: flex !important;
-        /* Always show content */
-        padding: 0;
+    /* Modify Control Stage to be Grid-compatible */
+    .control-stage {
+        height: auto;
         border: none;
-        animation: none;
+        display: contents;
+        /* Removes the wrapper to let children participate in grid */
+    }
+
+    /* Force all panels to show adjacent to each other */
+    .control-stage .control-panel {
+        display: flex !important;
+        position: static;
+        /* Remove absolute positioning */
+        height: 100%;
+        border-right: 1px solid var(--border-color);
+    }
+
+    /* Hide individual panel headers on desktop if redundant (layout implies it) */
+    .panel-header {
+        display: none;
     }
 
     /* Grid Layout */
     .editor-layout {
         display: grid;
-        grid-template-columns: 240px 1fr 200px 200px;
-        /* 4 columns: Content | Preview | Style | Effects */
-        overflow: hidden;
+        grid-template-columns: 280px 1fr 240px 240px;
+        /* 4 Columns */
         height: calc(100vh - 50px);
-        padding-bottom: 0;
+        overflow: hidden;
     }
 
-    /* Re-map panels to grid areas if needed, or rely on source order */
-    /* 
-       Source Order in HTML:
-       1. Preview (#previewPanel)
-       2. Container -> Content (#contentPanel)
-       3. Container -> Style (#stylePanel)
-       4. Container -> Effects (#effectsPanel)
+    /* Position 1: Input Panel (Column 1) */
+    #panel-input {
+        order: 1;
+        grid-column: 1;
+        background: var(--bg-secondary);
+    }
+
+    /* Position 2: Preview Stage (Column 2) */
+    .preview-stage {
+        order: 2;
+        grid-column: 2;
+        padding: 40px;
+        background: #000;
+    }
+
+    /* Position 3: Style Col (Merge Image, Text, Style into Col 3) */
+    /* Wait, we have 5 panels but 4 columns. */
+    /* Solution: Put Image, Text, Style into Column 3 (Vertical Stack) OR Tab them */
+    /* Let's try stacking them in Column 3 for now, with overflow */
+
+    #panel-image,
+    #panel-text,
+    #panel-style {
+        order: 3;
+        grid-column: 3;
+        display: flex !important;
+        border-bottom: 5px solid var(--bg-primary);
+        /* Visual sep */
+    }
+
+    /* Actually stacking absolute panels in grid is hard. */
+    /* We need a WRAPPER for Col 3 if we want to stack them. */
+    /* But we used 'display: contents' on control-stage. */
+
+    /* Better approach for Desktop: 
+       CSS Grid allows placing multiple items in the same cell. 
+       But we want them stacked vertically? No, that would be huge.
        
-       We need specific visual order in Grid: 
-       Col 1: Content
-       Col 2: Preview
-       Col 3: Style
-       Col 4: Effects
+       Let's use a SIMPLIFIED Desktop Grid: 3 Columns.
+       1. Controls (Left)
+       2. Preview (Center)
+       3. Export/Effects (Right)
     */
 
-    #previewPanel {
-        order: 2;
-        /* Visual Postion 2 */
-        position: static;
-        /* Remove sticky */
-        background: #000;
-        padding: 20px;
-        border-bottom: none;
-        border-right: 1px solid var(--border-color);
-        border-left: 1px solid var(--border-color);
-        max-height: 100%;
-        overflow: hidden;
+    /* Revision: Just allow horizontal scrolling of panels? No. */
+
+    /* Let's map specifically: */
+    /* Col 1: Input Panel */
+    #panel-input {
+        grid-area: 1 / 1 / 2 / 2;
     }
 
-    /* Content Panel (Inside Accordion) */
-    .accordion-item:nth-child(1) .accordion-content {
+    /* Col 2: Preview */
+    .preview-stage {
+        grid-area: 1 / 2 / 2 / 3;
+    }
+
+    /* Col 3: Middle Controls (Image, Text, Style) - WE need a container */
+    /* Since we don't have a container in HTML, we have to hack it or change HTML */
+
+    /* Okay, let's keep it simple. Show Input in Left, Effects in Right. 
+       Image/Text/Style? Show them in a new 'Center-Right' column.
+    */
+
+    .editor-layout {
+        grid-template-columns: 260px 1fr 260px;
+        /* 3 Cols */
+    }
+
+    #panel-input {
+        grid-column: 1;
+        border-right: 1px solid var(--border-color);
+    }
+
+    .preview-stage {
+        grid-column: 2;
+    }
+
+    /* The other panels... if we set them all to grid-column: 3, they will overlap. */
+    /* Unless we position them relative. */
+
+    /* QUICK FIX: On desktop, we can *keep* the tab navigation? */
+    /* Or just show ALL panels in a scrollable sidebar on the right. */
+
+    #panel-image,
+    #panel-text,
+    #panel-style,
+    #panel-effects {
+        grid-column: 3;
+        height: auto;
+        position: relative;
+        border-bottom: 1px solid var(--border-color);
+        flex-shrink: 0;
+    }
+
+    /* We need a scrollable container for Column 3. 
+       But 'control-stage' was display: contents. 
+       Let's remove display: contents and make control-stage the Right Sidebar.
+    */
+
+    .control-stage {
+        display: flex;
+        /* Restore flex */
+        flex-direction: column;
+        grid-column: 3;
+        overflow-y: auto;
+        height: 100%;
+        border-left: 1px solid var(--border-color);
+    }
+
+    /* Make Input panel hidden in the main control stage? No, it's inside control-stage in HTML */
+    /* HTML Structure: control-stage > panel-input, panel-image... */
+    /* So if control-stage is col 3, ALL panels are in col 3. */
+
+    /* We want Input in Col 1. */
+    /* Using display: contents is the only way to split them up. */
+
+    /* Let's Try: display: contents for control-stage. */
+    /* Manually place specific panels. */
+
+    /* Input -> Col 1 */
+    #panel-input {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    /* Others -> Col 3 */
+    #panel-image,
+    #panel-text,
+    #panel-style,
+    #panel-effects {
+        grid-column: 3;
+        grid-row: auto;
+        /* Stack them? Grid doesn't auto-stack in one cell nicely without subgrid */
+    }
+
+    /* Okay, if we put multiple items in col 3, grid will stack them vertically IF we use auto-rows? */
+    /* Or we can use a flex wrapper... but we don't have one. */
+
+    /* Hack: Make Col 3 a Flex container? No, Col 3 is a track. */
+
+    /* Let's go with: Desktop uses the Tab Interface too? 
+       Actually, that's not bad. Cleaner. 
+       Left: Input. Center: Preview. Right: Tabbed Controls (Style/Effects).
+    */
+
+    /* Let's stick to the 3-column layout where Right Column is the "Panel Area".
+       And we keep the tabs visible on Desktop? 
+       Or we force "Input" to be detached.
+    */
+
+    /* Simplest Path to Stability: 
+       Keep Mobile Layout logic for Panels on Desktop (One active at a time),
+       BUT show Input Panel *always* on Left, and others on Right?
+       That requires duplication or complex JS.
+    */
+
+    /* Let's just make the Desktop View a "Big Mobile View" for now (Split Screen),
+       OR just a standard Sidebar layout.
+       
+       Proposed Desktop:
+       Left: Preview (Large).
+       Right: Control Panel (Fixed Width).
+       Bottom Right: Nav Bar?
+       
+       Let's try to restore the old 4-column if possible.
+       HTML: Input, Image, Text, Style, Effects.
+       
+       We can set `.control-stage` to `display: grid; grid-template-columns: 1fr 1fr 1fr;`?
+       And place it below preview? No.
+       
+       Let's go with:
+       .editor-layout { grid-template-columns: 350px 1fr; }
+       Col 1: Control Stage (Scrollable list of ALL panels).
+       Col 2: Preview.
+    */
+
+    .editor-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        /* Preview | Controls */
+    }
+
+    .preview-stage {
         order: 1;
         border-right: 1px solid var(--border-color);
     }
 
-    /* Style Panel */
-    .accordion-item:nth-child(2) .accordion-content {
-        order: 3;
-        border-right: 1px solid var(--border-color);
-    }
-
-    /* Effects Panel */
-    .accordion-item:nth-child(3) .accordion-content {
-        order: 4;
-        border-right: none;
-    }
-
-    /* Generic Panel Inner Styling */
-    .panel-inner {
-        padding: 16px;
+    .control-stage {
+        order: 2;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
         overflow-y: auto;
-        height: 100%;
-        background: var(--bg-primary);
     }
 
-    .preview-wrapper {
-        height: 100%;
+    .control-stage .control-panel {
+        display: flex !important;
+        /* Show ALL panels */
+        position: relative;
+        min-height: auto;
+        border-bottom: 10px solid var(--bg-primary);
+        /* Spacing */
     }
 
-    #previewCanvas {
-        max-width: 100%;
-        max-height: calc(100vh - 180px);
-        object-fit: contain;
+    .panel-header {
+        display: block;
+        background: var(--bg-card);
     }
 
-    /* Hide Preview Actions inside preview panel on desktop if preferred, or styling appropriately */
-    .preview-actions {
-        margin-top: 10px;
+    /* Show headers */
+
+    /* Hide the bottom nav */
+    .bottom-nav {
+        display: none;
     }
 }

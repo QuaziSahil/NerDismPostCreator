@@ -6,27 +6,24 @@
 // ========================================
 // Accordion Logic (Mobile)
 // ========================================
-const accordionHeaders = document.querySelectorAll('.accordion-header');
+// ========================================
+// Tab Navigation Logic (Docked Layout)
+// ========================================
+const navBtns = document.querySelectorAll('.nav-btn');
+const panels = document.querySelectorAll('.control-panel');
 
-accordionHeaders.forEach(header => {
-    header.addEventListener('click', () => {
-        const item = header.parentElement;
-        const isActive = item.classList.contains('active');
+navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Remove active class from all
+        navBtns.forEach(b => b.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
 
-        // Close all items (Accordion behavior)
-        document.querySelectorAll('.accordion-item').forEach(i => {
-            i.classList.remove('active');
-        });
-
-        // Toggle current
-        if (!isActive) {
-            item.classList.add('active');
-
-            // Scroll to the active item to ensure visibility
-            // slight delay to allow open animation to start
-            setTimeout(() => {
-                header.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
+        // Add active to clicked
+        btn.classList.add('active');
+        const targetId = btn.dataset.target;
+        const targetPanel = document.getElementById(targetId);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
         }
     });
 });

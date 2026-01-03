@@ -24,178 +24,179 @@
         </header>
 
         <main class="editor-layout">
-            <!-- Preview Panel (Sticky Top on Mobile) -->
-            <section class="panel panel-preview" id="previewPanel">
-                <div class="preview-wrapper">
+            <!-- 1. Preview Stage (Flex Grow) -->
+            <section class="preview-stage" id="previewPanel">
+                <div class="preview-container">
                     <canvas id="previewCanvas" width="1080" height="1350"></canvas>
-                </div>
-                <!-- Actions moved inside preview for easy access -->
-                <div class="preview-actions">
-                    <button id="generateBtn" class="btn-generate">✨ Generate</button>
-                    <button id="downloadBtn" class="btn-download">⬇️ Download</button>
                 </div>
             </section>
 
-            <!-- Accordion Controls Container -->
-            <div class="accordion-container">
-
-                <!-- Content Accordion -->
-                <div class="accordion-item active">
-                    <button class="accordion-header">📥 Content</button>
-                    <div class="accordion-content">
-                        <section class="panel-inner" id="contentPanel">
-                            <div class="input-group">
-                                <div class="upload-area" id="uploadArea">
-                                    <span>📷 Tap to upload</span>
-                                    <input type="file" id="imageInput" accept="image/*" hidden />
-                                </div>
+            <!-- 2. Control Stage (Fixed Height Area for Controls) -->
+            <section class="control-stage">
+                <!-- PANEL: INPUT -->
+                <div class="control-panel active" id="panel-input">
+                    <div class="panel-header">📝 Content & Text</div>
+                    <div class="scroll-content">
+                        <div class="input-group">
+                            <div class="upload-area" id="uploadArea">
+                                <span>📷 Tap to Upload Image</span>
+                                <input type="file" id="imageInput" accept="image/*" hidden />
                             </div>
-
-                            <div class="input-group">
-                                <div class="row-group">
-                                    <select id="categorySelect">
-                                        <option value="GENERAL" selected>🌐 General</option>
-                                        <option value="BOOKS">📚 Books</option>
-                                        <option value="GAMING">🎮 Gaming</option>
-                                        <option value="ANIME">🎬 Anime</option>
-                                        <option value="TECH">💻 Tech</option>
-                                        <option value="MOVIES">🎥 Movies</option>
-                                        <option value="NEWS">📰 News</option>
-                                        <option value="NONE">❌ None</option>
-                                    </select>
-                                    <select id="aspectRatio">
-                                        <option value="instagram">📸 Instagram</option>
-                                        <option value="twitter">🐦 Twitter</option>
-                                        <option value="story">📱 Story</option>
-                                        <option value="square">⬜ Square</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="input-group">
-                                <textarea id="headlineInput" rows="2" placeholder="📝 Headline..."></textarea>
-                            </div>
-
-                            <div class="input-group">
-                                <textarea id="summaryInput" rows="2" placeholder="💬 Short summary..."></textarea>
-                            </div>
-
-                            <div class="input-group">
-                                <textarea id="bulletInput" rows="3"
-                                    placeholder="📌 Key points (one per line)"></textarea>
-                            </div>
-                        </section>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="headlineInput" rows="2" placeholder="Title / Headline"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="summaryInput" rows="2" placeholder="Short Summary"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="bulletInput" rows="3" placeholder="Key Points (one per line)"></textarea>
+                        </div>
+                        <div class="row-group">
+                            <select id="categorySelect">
+                                <option value="GENERAL" selected>🌐 General</option>
+                                <option value="BOOKS">📚 Books</option>
+                                <option value="GAMING">🎮 Gaming</option>
+                                <option value="ANIME">🎬 Anime</option>
+                                <option value="TECH">💻 Tech</option>
+                                <option value="MOVIES">🎥 Movies</option>
+                                <option value="NEWS">📰 News</option>
+                                <option value="NONE">❌ None</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Style Accordion -->
-                <div class="accordion-item">
-                    <button class="accordion-header">🎨 Style</button>
-                    <div class="accordion-content">
-                        <section class="panel-inner" id="stylePanel">
-                            <div class="compact-controls">
-                                <div class="section-label">📷 IMAGE</div>
-                                <div class="control-row">
-                                    <label>Height</label>
-                                    <input type="range" id="imageHeight" min="40" max="80" value="60" />
-                                    <span id="imageHeightVal">60%</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Y-Position</label>
-                                    <input type="range" id="imageYPos" min="-50" max="50" value="0" />
-                                    <span id="imageYPosVal">0%</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Overlay</label>
-                                    <input type="range" id="overlayOpacity" min="0" max="100" value="50" />
-                                    <span id="overlayOpacityVal">50%</span>
-                                </div>
-
-                                <div class="section-label">📝 TEXT</div>
-                                <div class="control-row">
-                                    <label>Font</label>
-                                    <select id="textFont">
-                                        <option value="Inter">Inter</option>
-                                        <option value="Oswald">Oswald</option>
-                                    </select>
-                                </div>
-                                <div class="control-row">
-                                    <label>Headline</label>
-                                    <input type="range" id="headlineSize" min="36" max="72" value="52" />
-                                    <span id="headlineSizeVal">52px</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Summary</label>
-                                    <input type="range" id="summarySize" min="16" max="36" value="24" />
-                                    <span id="summarySizeVal">24px</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Details</label>
-                                    <input type="range" id="detailsSize" min="16" max="36" value="26" />
-                                    <span id="detailsSizeVal">26px</span>
-                                </div>
-
-                                <div class="section-label">🎨 COLORS</div>
-                                <div class="control-row">
-                                    <label>Text</label>
-                                    <input type="color" id="textColor" value="#ffffff" />
-                                </div>
-                                <div class="control-row">
-                                    <label>Overlay</label>
-                                    <input type="color" id="overlayColor" value="#0a0a0f" />
-                                </div>
-                            </div>
-                        </section>
+                <!-- PANEL: IMAGE -->
+                <div class="control-panel" id="panel-image">
+                    <div class="panel-header">📷 Image Adjustments</div>
+                    <div class="scroll-content">
+                        <div class="control-row">
+                            <label>Size / Zoom</label>
+                            <input type="range" id="imageHeight" min="40" max="100" value="60" />
+                        </div>
+                        <div class="control-row">
+                            <label>Vertical Position</label>
+                            <input type="range" id="imageYPos" min="-50" max="50" value="0" />
+                        </div>
+                        <div class="control-row">
+                            <label>Overlay Opacity</label>
+                            <input type="range" id="overlayOpacity" min="0" max="100" value="50" />
+                        </div>
+                        <div class="row-group">
+                            <select id="aspectRatio">
+                                <option value="instagram">📸 Instagram</option>
+                                <option value="twitter">🐦 Twitter</option>
+                                <option value="story">📱 Story</option>
+                                <option value="square">⬜ Square</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Effects Accordion -->
-                <div class="accordion-item">
-                    <button class="accordion-header">✨ Effects</button>
-                    <div class="accordion-content">
-                        <section class="panel-inner" id="effectsPanel">
-                            <div class="compact-controls">
-                                <div class="section-label">✨ EFFECTS</div>
-                                <div class="control-row">
-                                    <label>Bottom Fade</label>
-                                    <input type="range" id="bottomOpacity" min="50" max="100" value="95" />
-                                    <span id="bottomOpacityVal">95%</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Text Glow</label>
-                                    <input type="range" id="textGlow" min="0" max="30" value="0" />
-                                    <span id="textGlowVal">0</span>
-                                </div>
-                                <div class="control-row">
-                                    <label>Line Glow</label>
-                                    <input type="range" id="lineGlow" min="0" max="40" value="15" />
-                                    <span id="lineGlowVal">15</span>
-                                </div>
-
-                                <div class="section-label">🌈 THEME</div>
-                                <div class="theme-grid">
-                                    <button class="theme-btn active" data-theme="neon">Neon</button>
-                                    <button class="theme-btn" data-theme="sunset">Sunset</button>
-                                    <button class="theme-btn" data-theme="ocean">Ocean</button>
-                                    <button class="theme-btn" data-theme="cyber">Cyber</button>
-                                    <button class="theme-btn" data-theme="fire">Fire</button>
-                                    <button class="theme-btn" data-theme="mint">Mint</button>
-                                </div>
-
-                                <div class="section-label">⚙️ OPTIONS</div>
-                                <div class="control-row">
-                                    <label>Gradient Text</label>
-                                    <input type="checkbox" id="gradientText" />
-                                </div>
-                                <div class="control-row">
-                                    <label>Show Footer</label>
-                                    <input type="checkbox" id="showFooter" checked />
-                                </div>
-                            </div>
-                        </section>
+                <!-- PANEL: TYPOGRAPHY -->
+                <div class="control-panel" id="panel-text">
+                    <div class="panel-header">🔤 Typography</div>
+                    <div class="scroll-content">
+                        <div class="control-row">
+                            <label>Font Family</label>
+                            <select id="textFont">
+                                <option value="Inter">Inter (Clean)</option>
+                                <option value="Oswald">Oswald (Bold)</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label>Headline Size</label>
+                            <input type="range" id="headlineSize" min="36" max="90" value="52" />
+                        </div>
+                        <div class="control-row">
+                            <label>Summary Size</label>
+                            <input type="range" id="summarySize" min="16" max="48" value="24" />
+                        </div>
+                        <div class="control-row">
+                            <label>Details Size</label>
+                            <input type="range" id="detailsSize" min="16" max="48" value="26" />
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- PANEL: STYLE -->
+                <div class="control-panel" id="panel-style">
+                    <div class="panel-header">🎨 Colors & Themes</div>
+                    <div class="scroll-content">
+                        <div class="section-label">THEMES</div>
+                        <div class="theme-grid">
+                            <button class="theme-btn active" data-theme="neon">Neon</button>
+                            <button class="theme-btn" data-theme="sunset">Sunset</button>
+                            <button class="theme-btn" data-theme="ocean">Ocean</button>
+                            <button class="theme-btn" data-theme="cyber">Cyber</button>
+                            <button class="theme-btn" data-theme="fire">Fire</button>
+                            <button class="theme-btn" data-theme="mint">Mint</button>
+                        </div>
+                        <div class="control-row" style="margin-top: 15px;">
+                            <label>Text Color</label>
+                            <input type="color" id="textColor" value="#ffffff" />
+                        </div>
+                        <div class="control-row">
+                            <label>Overlay Color</label>
+                            <input type="color" id="overlayColor" value="#0a0a0f" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL: EFFECTS -->
+                <div class="control-panel" id="panel-effects">
+                    <div class="panel-header">✨ Effects & Export</div>
+                    <div class="scroll-content">
+                        <div class="control-row">
+                            <label>Bottom Fade</label>
+                            <input type="range" id="bottomOpacity" min="50" max="100" value="95" />
+                        </div>
+                        <div class="control-row">
+                            <label>Text Glow</label>
+                            <input type="range" id="textGlow" min="0" max="30" value="0" />
+                        </div>
+                        <div class="control-row">
+                            <label>Line Glow</label>
+                            <input type="range" id="lineGlow" min="0" max="40" value="15" />
+                        </div>
+                        <div class="control-row">
+                            <label>Gradient Text</label>
+                            <input type="checkbox" id="gradientText" />
+                        </div>
+                        <div class="action-buttons-row">
+                            <button id="generateBtn" class="btn-generate">✨ Update Preview</button>
+                            <button id="downloadBtn" class="btn-download">⬇️ Download</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Bottom Navigation Bar (Horizontal Scroll) -->
+            <nav class="bottom-nav">
+                <div class="nav-scroller">
+                    <button class="nav-btn active" data-target="panel-input">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-label">Input</span>
+                    </button>
+                    <button class="nav-btn" data-target="panel-image">
+                        <span class="nav-icon">📷</span>
+                        <span class="nav-label">Image</span>
+                    </button>
+                    <button class="nav-btn" data-target="panel-text">
+                        <span class="nav-icon">🔤</span>
+                        <span class="nav-label">Text</span>
+                    </button>
+                    <button class="nav-btn" data-target="panel-style">
+                        <span class="nav-icon">🎨</span>
+                        <span class="nav-label">Style</span>
+                    </button>
+                    <button class="nav-btn" data-target="panel-effects">
+                        <span class="nav-icon">✨</span>
+                        <span class="nav-label">Effects</span>
+                    </button>
+                </div>
+            </nav>
         </main>
     </div>
 
