@@ -574,7 +574,7 @@ function drawFooter(ctx, w, h, theme) {
     grad.addColorStop(1, theme.grad[2]);
     ctx.fillStyle = grad;
     ctx.textAlign = 'center';
-    ctx.fillText('ner-dism.vercel.app', w / 2, h - 35);
+    ctx.fillText('nerdism.me', w / 2, h - 35);
     ctx.restore();
 }
 
