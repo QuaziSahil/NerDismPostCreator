@@ -25,30 +25,38 @@
 
         <!-- Mobile Tab Navigation -->
         <nav class="mobile-tabs">
-            <button class="tab-btn active" data-tab="content">📥 Content</button>
-            <button class="tab-btn" data-tab="preview">📱 Preview</button>
-            <button class="tab-btn" data-tab="style">🎨 Style</button>
+            <button class="tab-btn active" data-tab="content">📥</button>
+            <button class="tab-btn" data-tab="preview">📱</button>
+            <button class="tab-btn" data-tab="style">🎨</button>
+            <button class="tab-btn" data-tab="effects">✨</button>
         </nav>
 
         <main class="editor-layout">
             <!-- Content Panel -->
             <section class="panel panel-content" data-panel="content">
                 <div class="input-group">
-                    <label>📷 Image</label>
                     <div class="upload-area" id="uploadArea">
                         <span>📷 Tap to upload</span>
                         <input type="file" id="imageInput" accept="image/*" hidden />
                     </div>
                 </div>
 
-                <div class="input-group inline-row">
-                    <select id="categorySelect">
-                        <option value="GAMING">🎮 Gaming</option>
-                        <option value="ANIME">🎬 Anime</option>
-                        <option value="TECH">💻 Tech</option>
-                        <option value="MOVIES">🎥 Movies</option>
-                        <option value="NEWS">📰 News</option>
-                    </select>
+                <div class="input-group">
+                    <div class="row-group">
+                        <select id="categorySelect">
+                            <option value="GAMING">🎮 Gaming</option>
+                            <option value="ANIME">🎬 Anime</option>
+                            <option value="TECH">💻 Tech</option>
+                            <option value="MOVIES">🎥 Movies</option>
+                            <option value="NEWS">📰 News</option>
+                        </select>
+                        <select id="aspectRatio">
+                            <option value="instagram">📸 Instagram</option>
+                            <option value="twitter">🐦 Twitter</option>
+                            <option value="story">📱 Story</option>
+                            <option value="square">⬜ Square</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -78,13 +86,14 @@
             <!-- Style Panel -->
             <section class="panel panel-controls" data-panel="style">
                 <div class="compact-controls">
+                    <div class="section-label">📷 IMAGE</div>
                     <div class="control-row">
-                        <label>Image Height</label>
+                        <label>Height</label>
                         <input type="range" id="imageHeight" min="40" max="80" value="60" />
                         <span id="imageHeightVal">60%</span>
                     </div>
                     <div class="control-row">
-                        <label>Image Y-Pos</label>
+                        <label>Y-Position</label>
                         <input type="range" id="imageYPos" min="-50" max="50" value="0" />
                         <span id="imageYPosVal">0%</span>
                     </div>
@@ -93,6 +102,8 @@
                         <input type="range" id="overlayOpacity" min="0" max="100" value="50" />
                         <span id="overlayOpacityVal">50%</span>
                     </div>
+
+                    <div class="section-label">📝 TEXT</div>
                     <div class="control-row">
                         <label>Font</label>
                         <select id="textFont">
@@ -110,13 +121,53 @@
                         <input type="range" id="bulletSize" min="18" max="36" value="26" />
                         <span id="bulletSizeVal">26px</span>
                     </div>
+
+                    <div class="section-label">🎨 COLORS</div>
                     <div class="control-row">
-                        <label>Text Color</label>
+                        <label>Text</label>
                         <input type="color" id="textColor" value="#ffffff" />
                     </div>
                     <div class="control-row">
-                        <label>Overlay Color</label>
+                        <label>Overlay</label>
                         <input type="color" id="overlayColor" value="#0a0a0f" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Effects Panel (NEW) -->
+            <section class="panel panel-effects" data-panel="effects">
+                <div class="compact-controls">
+                    <div class="section-label">✨ EFFECTS</div>
+                    <div class="control-row">
+                        <label>Bottom Fade</label>
+                        <input type="range" id="bottomOpacity" min="50" max="100" value="95" />
+                        <span id="bottomOpacityVal">95%</span>
+                    </div>
+                    <div class="control-row">
+                        <label>Text Glow</label>
+                        <input type="range" id="textGlow" min="0" max="30" value="0" />
+                        <span id="textGlowVal">0</span>
+                    </div>
+                    <div class="control-row">
+                        <label>Line Glow</label>
+                        <input type="range" id="lineGlow" min="0" max="40" value="15" />
+                        <span id="lineGlowVal">15</span>
+                    </div>
+
+                    <div class="section-label">🌈 THEME</div>
+                    <div class="theme-grid">
+                        <button class="theme-btn active" data-theme="neon">Neon</button>
+                        <button class="theme-btn" data-theme="sunset">Sunset</button>
+                        <button class="theme-btn" data-theme="ocean">Ocean</button>
+                        <button class="theme-btn" data-theme="cyber">Cyber</button>
+                        <button class="theme-btn" data-theme="fire">Fire</button>
+                        <button class="theme-btn" data-theme="mint">Mint</button>
+                    </div>
+
+                    <div class="section-label">⚙️ OPTIONS</div>
+                    <div class="control-row">
+                        <label>Gradient Text</label>
+                        <input type="checkbox" id="gradientText" />
                     </div>
                     <div class="control-row">
                         <label>Show Footer</label>

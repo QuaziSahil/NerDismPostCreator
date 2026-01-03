@@ -314,8 +314,58 @@ body {
     color: var(--accent-pink);
 }
 
+/* ... (previous styles) ... */
+
+.section-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent-purple);
+    margin: 15px 0 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.theme-btn {
+    padding: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.theme-btn.active {
+    background: var(--bg-card);
+    border-color: var(--accent-pink);
+    color: var(--accent-pink);
+    box-shadow: 0 0 10px rgba(217, 70, 168, 0.2);
+}
+
+.row-group {
+    display: flex;
+    gap: 10px;
+}
+
+.row-group select {
+    flex: 1;
+}
+
 /* ========================================
-   Desktop Layout (3-column) - Only for wide screens
+   Desktop Layout (4-column) - Only for wide screens
    ======================================== */
 @media (min-width: 1024px) {
     .mobile-tabs {
@@ -324,7 +374,8 @@ body {
 
     .editor-layout {
         display: grid;
-        grid-template-columns: 300px 1fr 280px;
+        grid-template-columns: 260px 1fr 240px 240px;
+        /* 4 columns */
         overflow: hidden;
     }
 
@@ -343,6 +394,7 @@ body {
 
     .panel-preview {
         padding: 20px;
+        background: #000;
     }
 
     .preview-wrapper {
@@ -350,7 +402,8 @@ body {
     }
 
     #previewCanvas {
-        max-width: 360px;
+        max-width: 100%;
         max-height: calc(100vh - 180px);
+        object-fit: contain;
     }
 }
