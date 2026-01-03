@@ -466,10 +466,8 @@ function drawQuoteBox(ctx, w, startY, text, theme) {
         }
     });
     lines.push(currentLine);
-    if (lines.length > 2) {
-        lines = lines.slice(0, 2);
-        lines[1] = lines[1].substring(0, Math.max(0, lines[1].length - 3)) + '...';
-    }
+    // REMOVED line truncation limit
+    // if (lines.length > 2) { ... }
 
     const lineHeight = quoteFontSize * 1.3;
     const boxHeight = lines.length * lineHeight + 36;
