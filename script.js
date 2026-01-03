@@ -43,6 +43,7 @@ const previewCanvas = document.getElementById('previewCanvas');
 
 // Control Elements
 const imageHeightSlider = document.getElementById('imageHeight');
+const imageYPosSlider = document.getElementById('imageYPos');
 const overlayOpacitySlider = document.getElementById('overlayOpacity');
 const textFontSelect = document.getElementById('textFont');
 const headlineSizeSlider = document.getElementById('headlineSize');
@@ -57,6 +58,7 @@ const showFooterCheckbox = document.getElementById('showFooter');
 let uploadedImage = null;
 let settings = {
     imageHeight: 60,
+    imageYPos: 0,
     overlayOpacity: 50,
     overlayColor: '#0a0a0f',
     textFont: 'Inter',
@@ -81,6 +83,12 @@ function setupSlider(slider, valueSpan, key, suffix = '') {
 imageHeightSlider?.addEventListener('input', () => {
     settings.imageHeight = parseInt(imageHeightSlider.value);
     document.getElementById('imageHeightVal').textContent = imageHeightSlider.value + '%';
+    generatePost();
+});
+
+imageYPosSlider?.addEventListener('input', () => {
+    settings.imageYPos = parseInt(imageYPosSlider.value);
+    document.getElementById('imageYPosVal').textContent = imageYPosSlider.value + '%';
     generatePost();
 });
 
@@ -244,7 +252,10 @@ function drawImage(ctx, w, imageH) {
     const newW = img.width * scale;
     const newH = img.height * scale;
     const x = (w - newW) / 2;
-    const y = (imageH - newH) / 2;
+    // Apply Y-offset from settings (-50 to +50 percent of extra height)
+    const extraH = newH - imageH;
+    const yOffset = (settings.imageYPos / 100) * extraH;
+    const y = (imageH - newH) / 2 + yOffset;
     ctx.drawImage(img, x, y, newW, newH);
 }
 
