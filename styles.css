@@ -371,8 +371,8 @@ body {
 
     .editor-layout {
         display: grid;
-        grid-template-columns: 260px 1fr 240px 240px;
-        /* 4 columns */
+        grid-template-columns: 240px 1fr 200px 200px;
+        /* 4 columns: Content | Preview | Style | Effects */
         overflow: hidden;
     }
 
