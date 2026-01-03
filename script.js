@@ -48,7 +48,8 @@ const imageYPosSlider = document.getElementById('imageYPos');
 const overlayOpacitySlider = document.getElementById('overlayOpacity');
 const textFontSelect = document.getElementById('textFont');
 const headlineSizeSlider = document.getElementById('headlineSize');
-const bulletSizeSlider = document.getElementById('bulletSize');
+const summarySizeSlider = document.getElementById('summarySize');
+const detailsSizeSlider = document.getElementById('detailsSize');
 const textColorPicker = document.getElementById('textColor');
 const overlayColorPicker = document.getElementById('overlayColor');
 const showFooterCheckbox = document.getElementById('showFooter');
@@ -73,7 +74,8 @@ let settings = {
     overlayColor: '#0a0a0f',
     textFont: 'Inter',
     headlineSize: 52,
-    bulletSize: 26,
+    summarySize: 24,
+    detailsSize: 26,
     textColor: '#ffffff',
     textGlow: 0,
     lineGlow: 15,
@@ -101,7 +103,8 @@ const sliderMap = {
     'imageYPos': 'imageYPos',
     'overlayOpacity': 'overlayOpacity',
     'headlineSize': 'headlineSize',
-    'bulletSize': 'bulletSize',
+    'summarySize': 'summarySize',
+    'detailsSize': 'detailsSize',
     'bottomOpacity': 'bottomOpacity',
     'textGlow': 'textGlow',
     'lineGlow': 'lineGlow'
@@ -446,7 +449,7 @@ function drawSummary(ctx, w, h, imageH, theme) {
 
 function drawQuoteBox(ctx, w, startY, text, theme) {
     const maxWidth = w - 140;
-    const quoteFontSize = Math.min(settings.bulletSize + 4, 32);
+    const quoteFontSize = settings.summarySize;
 
     ctx.font = `600 italic ${quoteFontSize}px "${settings.textFont}", sans-serif`;
     const words = text.split(' ');
@@ -504,7 +507,7 @@ function drawColorfulBullets(ctx, w, h, startY, bulletsText, theme) {
     if (bullets.length === 0) return;
 
     const maxWidth = w - 150;
-    const bulletFontSize = settings.bulletSize;
+    const bulletFontSize = settings.detailsSize;
     const lineHeight = bulletFontSize * 1.6;
     let currentY = startY + 5;
 
