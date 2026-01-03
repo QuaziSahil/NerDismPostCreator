@@ -380,6 +380,11 @@ select:focus {
     color: var(--accent-purple);
 }
 
+/* Desktop Buttons Hidden by Default */
+.desktop-actions {
+    display: none;
+}
+
 /* ========================================
    Desktop Layout (min-width: 1024px)
    ======================================== */
@@ -393,52 +398,46 @@ select:focus {
     /* Grid Layout Container */
     .editor-layout {
         display: grid;
-        /* Columns: Content | Preview | Style | Effects */
-        grid-template-columns: 240px 1fr 200px 240px;
-        /* Rows: Auto needed for stacking style panels, but we want full height. 
-           Row 1: Content (Full), Preview (Full), Image (Auto), Effects (Full).
-           Row 2: Text (Auto)
-           Row 3: Style (Fill)
-        */
-        grid-template-rows: auto auto 1fr;
+        /* Columns: Content | Preview | Middle Controls | Right Controls */
+        grid-template-columns: 260px 1fr 240px 240px;
+        grid-template-rows: 1fr;
         height: calc(100vh - 50px);
         overflow: hidden;
         padding-bottom: 0;
     }
 
-    /* Remove Mobile Dock Styling from Control Stage */
+    /* Remove Mobile Dock Styling */
     .control-stage {
         height: auto;
         border: none;
         display: contents;
-        /* Children become grid items */
     }
 
     /* Panels Common Desktop Style */
     .control-stage .control-panel {
         display: flex !important;
-        /* Force show all panels */
         position: static;
         inset: auto;
         border-right: 1px solid var(--border-color);
         background: var(--bg-primary);
         flex-direction: column;
-        overflow: hidden;
-        /* Prevent spill */
+        overflow-y: auto;
     }
 
-    /* Panel Headers visible on Desktop */
     .panel-header {
         display: block;
         background: var(--bg-card);
         border-bottom: 1px solid var(--border-color);
+        padding: 12px;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
 
     /* Col 1: Content (Input) */
     #panel-input {
         grid-column: 1;
-        grid-row: 1 / -1;
-        /* Span all rows */
+        background: var(--bg-secondary);
         border-right: 1px solid var(--border-color);
     }
 
@@ -446,46 +445,83 @@ select:focus {
     .preview-stage {
         grid-column: 2;
         grid-row: 1 / -1;
-        padding: 40px;
+        padding: 20px;
         background: #000;
         border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 20px;
     }
 
     #previewCanvas {
-        max-height: calc(100vh - 100px);
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
     }
 
-    /* Col 3: Style Group (Image, Text, Style) - Stacked Vertically */
+    /* Desktop Actions Visible */
+    .desktop-actions {
+        display: flex;
+        gap: 15px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    /* Hide Mobile Buttons in Effects Panel */
+    #panel-effects .action-buttons-row {
+        display: none;
+    }
+
+    /* Col 3: Middle Controls (Image, Text, Colors) */
+    .editor-layout {
+        grid-template-rows: 1fr 1fr 1fr;
+    }
+
+    #panel-input,
+    .preview-stage,
+    #panel-effects {
+        grid-row: 1 / -1;
+    }
+
     #panel-image {
         grid-column: 3;
         grid-row: 1;
+        min-height: 0;
         border-bottom: 1px solid var(--border-color);
-        height: auto;
-        min-height: 200px;
     }
 
     #panel-text {
         grid-column: 3;
         grid-row: 2;
+        min-height: 0;
         border-bottom: 1px solid var(--border-color);
-        height: auto;
-        min-height: 250px;
     }
 
     #panel-style {
         grid-column: 3;
         grid-row: 3;
-        /* Takes remaining space */
+        min-height: 0;
+        border-bottom: none;
     }
 
     /* Col 4: Effects & Export */
     #panel-effects {
         grid-column: 4;
-        grid-row: 1 / -1;
         border-right: none;
     }
 
-    /* Adjust scroll content for desktop panels */
+    /* Adjust Scroll Content Padding */
     .scroll-content {
         padding: 12px;
     }
